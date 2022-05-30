@@ -49,7 +49,7 @@ spec:
     protocol: TCP
     match:
       ingressPort: 9100
-      host: a.test.com
+      host: mtls.httpbin.local
     backend:
       serviceName: %s
       servicePort: %d
@@ -135,7 +135,7 @@ spec:
     protocol: UDP
     match:
       ingressPort: 9200
-      host: a.test.com
+      host: mtls.httpbin.local
     backend:
       serviceName: coredns
       servicePort: 53
