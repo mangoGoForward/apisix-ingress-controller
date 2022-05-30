@@ -65,7 +65,7 @@ spec:
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
 		assert.Equal(ginkgo.GinkgoT(), sr[0].ServerPort, int32(9100))
-		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "a.test.com")
+		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "mtls.httpbin.local")
 
 		resp := s.NewAPISIXClientWithTCPProxy().GET("/ip").Expect()
 		resp.Body().Contains("origin")
@@ -154,7 +154,7 @@ spec:
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
 		assert.Equal(ginkgo.GinkgoT(), sr[0].ServerPort, int32(9200))
-		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "a.test.com")
+		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "mtls.httpbin.local")
 		// test dns query
 		r := s.DNSResolver()
 		host := "httpbin.org"
