@@ -50,7 +50,7 @@ spec:
     protocol: TCP
     match:
       ingressPort: 9100
-      host: mtls.httpbin.local
+      host: httpbin.org
     backend:
       serviceName: %s
       servicePort: %d
@@ -138,7 +138,7 @@ spec:
     protocol: UDP
     match:
       ingressPort: 9200
-      host: mtls.httpbin.local
+      host: httpbin.org
     backend:
       serviceName: coredns
       servicePort: 53
@@ -157,7 +157,7 @@ spec:
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
 		assert.Equal(ginkgo.GinkgoT(), sr[0].ServerPort, int32(9200))
-		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "mtls.httpbin.local")
+		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "httpbin.org")
 		// test dns query
 		r := s.DNSResolver()
 		host := "httpbin.org"
