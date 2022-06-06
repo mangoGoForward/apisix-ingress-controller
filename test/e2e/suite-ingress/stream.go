@@ -18,6 +18,7 @@ package ingress
 import (
 	"context"
 	"fmt"
+	"github.com/apache/apisix-ingress-controller/pkg/log"
 	"time"
 
 	ginkgo "github.com/onsi/ginkgo/v2"
@@ -56,6 +57,8 @@ spec:
 `, backendSvc, backendSvcPort[0])
 
 		assert.Nil(ginkgo.GinkgoT(), s.CreateResourceFromString(apisixRoute))
+		log.Warnf("apisix route yaml:%s", apisixRoute)
+
 		time.Sleep(12 * time.Second)
 
 		err := s.EnsureNumApisixStreamRoutesCreated(1)
