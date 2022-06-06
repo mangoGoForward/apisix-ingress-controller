@@ -524,7 +524,7 @@ spec:
                       match:
                         type: object
                         properties:
-                          host:
+                          "host":
                             type: string
                           ingressPort:
                             type: integer
@@ -532,6 +532,7 @@ spec:
                             maximum: 65535
                         required:
                           - ingressPort
+                          - host
                       backend:
                         type: object
                         properties:
