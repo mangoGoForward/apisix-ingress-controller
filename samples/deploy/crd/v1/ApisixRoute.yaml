@@ -308,15 +308,15 @@ spec:
           name: Target Service(HTTP)
           type: string
           priority: 1
-        - jsonPath: .spec.match[].match.host
+        - jsonPath: .spec.stream[].match.host
           name: Ingress Server Host
           type: string
-          priority: 1
-        - jsonPath: .spec.match[].match.ingressPort
+          priority: 0
+        - jsonPath: .spec.stream[].match.ingressPort
           name: Ingress Server Port(TCP)
           type: integer
-          priority: 0
-        - jsonPath: .spec.match[].match.backend.serviceName
+          priority: 1
+        - jsonPath: .spec.stream[].match.backend.serviceName
           name: Target Service(TCP)
           type: string
           priority: 1
@@ -789,6 +789,8 @@ spec:
                       match:
                         type: object
                         properties:
+                          "host":
+                            type: string
                           ingressPort:
                             type: integer
                             minimum: 1
