@@ -27,20 +27,20 @@ import (
 	"github.com/apache/apisix-ingress-controller/test/e2e/scaffold"
 )
 
-var _ = ginkgo.Describe("suite-ingress: ApisixRoute stream Testing with v2beta3", func() {
+var _ = ginkgo.Describe("suite-ingress: ApisixRoute stream Testing with v2", func() {
 	opts := &scaffold.Options{
 		Name:                  "default",
 		Kubeconfig:            scaffold.GetKubeconfig(),
 		APISIXConfigPath:      "testdata/apisix-gw-config.yaml",
 		IngressAPISIXReplicas: 1,
 		HTTPBinServicePort:    80,
-		APISIXRouteVersion:    "apisix.apache.org/v2beta3",
+		APISIXRouteVersion:    "apisix.apache.org/v2",
 	}
 	s := scaffold.NewScaffold(opts)
 	ginkgo.It("stream tcp proxy", func() {
 		backendSvc, backendSvcPort := s.DefaultHTTPBackend()
 		apisixRoute := fmt.Sprintf(`
-apiVersion: apisix.apache.org/v2beta3
+apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
   name: httpbin-tcp-route
@@ -67,8 +67,8 @@ spec:
 		sr, err := s.ListApisixStreamRoutes()
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
-		assert.Equal(ginkgo.GinkgoT(), sr[0].ServerPort, int32(9100))
-		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "mtls.httpbin.local")
+		assert.Equal(ginkgo.GinkgoT(), int32(9100), sr[0].ServerPort)
+		assert.Equal(ginkgo.GinkgoT(), "httpbin.org", sr[0].SNI)
 
 		resp := s.NewAPISIXClientWithTCPProxy().GET("/ip").Expect()
 		resp.Body().Contains("origin")
@@ -128,7 +128,7 @@ spec:
 		s.EnsureNumEndpointsReady(ginkgo.GinkgoT(), "coredns", 1)
 
 		apisixRoute := fmt.Sprintf(`
-apiVersion: apisix.apache.org/v2beta3
+apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
   name: httpbin-udp-route
@@ -156,8 +156,8 @@ spec:
 		sr, err := s.ListApisixStreamRoutes()
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
-		assert.Equal(ginkgo.GinkgoT(), sr[0].ServerPort, int32(9200))
-		assert.Equal(ginkgo.GinkgoT(), sr[0].SNI, "httpbin.org")
+		assert.Equal(ginkgo.GinkgoT(), int32(9200), sr[0].ServerPort)
+		assert.Equal(ginkgo.GinkgoT(), "httpbin.org", sr[0].SNI)
 		// test dns query
 		r := s.DNSResolver()
 		host := "httpbin.org"
