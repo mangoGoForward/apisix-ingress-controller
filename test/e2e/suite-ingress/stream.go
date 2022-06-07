@@ -138,7 +138,6 @@ spec:
     protocol: UDP
     match:
       ingressPort: 9200
-      host: httpbin.org
     backend:
       serviceName: coredns
       servicePort: 53
@@ -157,7 +156,7 @@ spec:
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
 		assert.Equal(ginkgo.GinkgoT(), int32(9200), sr[0].ServerPort)
-		assert.Equal(ginkgo.GinkgoT(), "httpbin.org", sr[0].SNI)
+		assert.Equal(ginkgo.GinkgoT(), "", sr[0].SNI)
 		// test dns query
 		r := s.DNSResolver()
 		host := "httpbin.org"
