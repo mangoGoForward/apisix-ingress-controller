@@ -531,7 +531,6 @@ spec:
                             maximum: 65535
                         required:
                           - ingressPort
-                          - host
                       backend:
                         type: object
                         properties:
@@ -795,6 +794,7 @@ spec:
                             maximum: 65535
                         required:
                           - ingressPort
+                          - host
                       backend:
                         type: object
                         properties:
