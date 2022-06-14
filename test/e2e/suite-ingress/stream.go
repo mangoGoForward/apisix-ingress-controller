@@ -49,7 +49,6 @@ spec:
     protocol: TCP
     match:
       ingressPort: 9100
-      host: httpbin.org
     backend:
       serviceName: %s
       servicePort: %d
@@ -66,7 +65,7 @@ spec:
 		assert.Nil(ginkgo.GinkgoT(), err)
 		assert.Len(ginkgo.GinkgoT(), sr, 1)
 		assert.Equal(ginkgo.GinkgoT(), int32(9100), sr[0].ServerPort)
-		assert.Equal(ginkgo.GinkgoT(), "httpbin.org", sr[0].SNI)
+		assert.Equal(ginkgo.GinkgoT(), "", sr[0].SNI)
 
 		resp := s.NewAPISIXClientWithTCPProxy().GET("/ip").Expect()
 		resp.Body().Contains("origin")
@@ -160,5 +159,44 @@ spec:
 		host := "httpbin.org"
 		_, err = r.LookupIPAddr(context.Background(), host)
 		assert.Nil(ginkgo.GinkgoT(), err, "dns query error")
+	})
+
+	ginkgo.It("stream tcp proxy with match host", func() {
+		backendSvc, backendSvcPort := s.DefaultHTTPBackend()
+		apisixRoute := fmt.Sprintf(`
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: httpbin-tcp-route
+spec:
+  stream:
+  - name: rule1
+    protocol: TCP
+    match:
+      ingressPort: 9100
+      host: httpbin.org
+    backend:
+      serviceName: %s
+      servicePort: %d
+`, backendSvc, backendSvcPort[0])
+
+		assert.Nil(ginkgo.GinkgoT(), s.CreateResourceFromString(apisixRoute))
+
+		time.Sleep(12 * time.Second)
+
+		err := s.EnsureNumApisixStreamRoutesCreated(1)
+		assert.Nil(ginkgo.GinkgoT(), err, "Checking number of routes")
+
+		sr, err := s.ListApisixStreamRoutes()
+		assert.Nil(ginkgo.GinkgoT(), err)
+		assert.Len(ginkgo.GinkgoT(), sr, 1)
+		assert.Equal(ginkgo.GinkgoT(), int32(9100), sr[0].ServerPort)
+		assert.Equal(ginkgo.GinkgoT(), "httpbin.org", sr[0].SNI)
+
+		resp := s.NewAPISIXClientWithTCPProxy().GET("/ip").Expect()
+		resp.Body().Contains("origin")
+
+		resp = s.NewAPISIXClientWithTCPProxy().GET("/get").WithHeader("x-my-header", "x-my-value").Expect()
+		resp.Body().Contains("x-my-value")
 	})
 })

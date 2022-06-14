@@ -794,7 +794,6 @@ spec:
                             type: string
                         required:
                           - ingressPort
-                          - host
                       backend:
                         type: object
                         properties:
