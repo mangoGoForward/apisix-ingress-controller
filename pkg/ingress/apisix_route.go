@@ -97,6 +97,8 @@ func (c *apisixRouteController) sync(ctx context.Context, ev *types.Event) error
 		ar   kube.ApisixRoute
 		tctx *translation.TranslateContext
 	)
+
+	log.Debugw("ApisixRoute sync xu", zap.Any("object", obj))
 	switch obj.GroupVersion {
 	case kube.ApisixRouteV2beta2:
 		ar, err = c.controller.apisixRouteLister.V2beta2(namespace, name)
